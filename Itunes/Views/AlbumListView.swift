@@ -13,8 +13,25 @@ struct AlbumListView: View {
   
   var body: some View {
     NavigationView {
-      List(viewModel.albums) { album in
-        Text(album.collectionName)
+      List {
+        ForEach(viewModel.albums) { album in
+          Text(album.collectionName)
+        }
+        
+        switch viewModel.state {
+          case .good:
+            Color.clear
+              .onAppear {
+                viewModel.loadMore()
+              }
+          case .isLoading:
+            ProgressView().progressViewStyle(.circular)
+          case .loadedAll:
+            Color.gray
+          case .error(let message):
+            Text(message)
+              .foregroundStyle(.red)
+        }
       }
       .listStyle(.plain)
       .searchable(text: $viewModel.searchTerm)
